@@ -34,18 +34,23 @@ grunt.registerTask( "build-members-page", function() {
 		var rowOpen,
 			rowClose,
 			memberCount = 1,
+			memberLen = members.corporate[ level ].length,
 			prettyLevel = level.replace( /^\w/, function( character ) {
 			return character.toUpperCase();
 		}) + " Members";
 
 		return "<h2 class='block'>" + prettyLevel + "</h2>\n" +
-			members.corporate[ level ].map(function( member ) {
+			members.corporate[ level ].map(function( member, index ) {
 				var logoPath = "/resources/members/" +
 					member.name.toLowerCase().replace( /[^a-z0-9]/g, "" ) + ".png";
 
 				if ( memberCount % 2 ) {
 					rowOpen = "<div class='row'>\n";
-					rowClose = "";
+					if ( index == memberLen - 1 ) {
+						rowClose = "</div>";
+					} else {
+						rowClose = "";
+					}
 				} else {
 					rowOpen = "";
 					rowClose = "</div>";
@@ -65,7 +70,7 @@ grunt.registerTask( "build-members-page", function() {
 						"</div>\n" +
 					"</div>\n</div>\n" + rowClose;
 			}).join( "\n" );
-	}).join( "</div>\n" );
+	}).join( "\n" );
 
 	content = content.replace( "{{corporate-members}}", memberContent );
 	grunt.file.write( path, content );
