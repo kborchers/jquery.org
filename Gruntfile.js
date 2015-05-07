@@ -31,7 +31,10 @@ grunt.registerTask( "build-members-page", function() {
 		content = grunt.file.read( path );
 
 	memberContent = Object.keys( members.corporate ).map(function( level ) {
-		var prettyLevel = level.replace( /^\w/, function( character ) {
+		var rowOpen,
+			rowClose,
+			memberCount = 1,
+			prettyLevel = level.replace( /^\w/, function( character ) {
 			return character.toUpperCase();
 		}) + " Members";
 
@@ -40,7 +43,17 @@ grunt.registerTask( "build-members-page", function() {
 				var logoPath = "/resources/members/" +
 					member.name.toLowerCase().replace( /[^a-z0-9]/g, "" ) + ".png";
 
-				return "" +
+				if ( memberCount % 2 ) {
+					rowOpen = "<div class='row'>\n";
+					rowClose = "";
+				} else {
+					rowOpen = "";
+					rowClose = "</div>";
+				}
+
+				memberCount++;
+
+				return rowOpen + "<div class='six mobile columns corporatemembers'>\n" +
 					"<div class='row'>\n" +
 						"<div class='four mobile columns'>\n" +
 							"<a href='" + member.url + "'>\n" +
@@ -50,9 +63,9 @@ grunt.registerTask( "build-members-page", function() {
 						"<div class='eight mobile columns'>\n" +
 							member.description +
 						"</div>\n" +
-					"</div>";
+					"</div>\n</div>\n" + rowClose;
 			}).join( "\n" );
-	}).join( "\n" );
+	}).join( "</div>\n" );
 
 	content = content.replace( "{{corporate-members}}", memberContent );
 	grunt.file.write( path, content );
